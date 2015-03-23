@@ -1,0 +1,34 @@
+<script type="text/javascript" src="./build/js/lib/requirejs/2.1.16/require.min.js"></script>
+<script type="text/javascript">
+    if(/debug/.test(window.location.search)){
+        requirejs.config({
+            baseUrl: 'static/js',
+            paths: {
+                backbone: 'lib/backbone/1.1.2/backbone',
+                jquery: 'lib/jquery/1.7.2/jquery',
+                swiper: 'lib/swiper/3.0.4/swiper.jquery',
+                underscore: 'lib/underscore/1.8.2/underscore'
+            },
+            shim: {
+                'backbone': {
+                    //These script dependencies should be loaded before loading
+                    //backbone.js
+                    deps: ['underscore', 'jquery'],
+                    //Once loaded, use the global 'Backbone' as the
+                    //module value.
+                    exports: 'Backbone'
+                },
+                'underscore': {
+                    exports: '_'
+                },
+            }
+        });
+        require(['app/view/index']);
+    }
+    else{
+        requirejs.config({
+            baseUrl: 'build/js',
+        });
+        require(['app-index']);
+    }
+</script>
