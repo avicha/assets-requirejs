@@ -80,6 +80,11 @@ module.exports = (grunt)->
                         dest: "#{BUILD}/css/lib"
                     }
                 ]
+        csslint:
+            # options:
+            #     csslintrc: '.csslintrc'
+            app:
+                src: ["#{BUILD}/css/app/**/*.css"]
         #自动根据指定排列css属性
         csscomb:
             options:
@@ -88,7 +93,7 @@ module.exports = (grunt)->
                 files: [
                     {
                         expand: true
-                        cwd: "#{ROOT}/css/app"
+                        cwd: "#{BUILD}/css/app"
                         src: ['**/*.css','!**/*.min.css']
                         ext: '.css'
                         dest: "#{BUILD}/css/app"
@@ -125,18 +130,66 @@ module.exports = (grunt)->
                 tasks: ['uglify:app','jshint','requirejs']  
             app_css:
                 files: ["static/css/app/**/*.less"]
-                tasks: ['less:app','csscomb:app','cssmin:app']
+                tasks: ['less:app','csslint:app','csscomb:app','cssmin:app']
             image:
                 files: ["static/img/**/*.{png,jpg,gif}"]
                 tasks: ['imagemin']
+        copy:
+            app_css:
+                files: [
+                    {
+                        expand: true
+                        cwd: "#{ROOT}/css/app"
+                        src: "!**/*.less"
+                        dest: "#{BUILD}/css/app"
+                    }
+                ]
+            lib_css:
+                files: [
+                    {
+                        expand: true
+                        cwd: "#{ROOT}/css/lib"
+                        src: ['!**/*.css','!**/*.min.css']
+                        dest: "#{BUILD}/css/lib"
+                    }
+                ]
+            app_js:
+                files: [
+                    {
+                        expand: true
+                        cwd: "#{ROOT}/js/app"
+                        src: ['!**/*.js','!**/*.min.js']
+                        dest: "#{BUILD}/js/app"
+                    }
+                ]
+            lib_js:
+                files: [
+                    {
+                        expand: true
+                        cwd: "#{ROOT}/js/lib"
+                        src: ['!**/*.js','!**/*.min.js']
+                        dest: "#{BUILD}/js/lib"
+                    }
+                ]
+            image:
+                files: [
+                    {
+                        expand: true
+                        cwd: "#{ROOT}/img"
+                        src: ["!**/*.{png,jpg,gif}"]
+                        dest: "#{BUILD}/img"
+                    }
+                ]
     # Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-uglify')
     grunt.loadNpmTasks('grunt-contrib-jshint')
     grunt.loadNpmTasks('grunt-contrib-requirejs')
     grunt.loadNpmTasks('grunt-contrib-less')
+    grunt.loadNpmTasks('grunt-contrib-csslint')
     grunt.loadNpmTasks('grunt-csscomb')
     grunt.loadNpmTasks('grunt-contrib-cssmin')
     grunt.loadNpmTasks('grunt-contrib-imagemin')
     grunt.loadNpmTasks('grunt-contrib-watch')
+    grunt.loadNpmTasks('grunt-contrib-copy')
     # Default task(s).
-    grunt.registerTask('default', ['uglify', 'jshint', 'requirejs', 'less', 'csscomb', 'cssmin', 'imagemin'])
+    grunt.registerTask('default', ['uglify', 'jshint', 'requirejs', 'less', 'csslint', 'csscomb', 'cssmin', 'imagemin', 'copy'])
