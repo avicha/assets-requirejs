@@ -7,6 +7,52 @@ module.exports = (grunt)->
     #项目配置
     grunt.initConfig
         pkg: grunt.file.readJSON 'package.json'
+        copy:
+            app_css:
+                files: [
+                    {
+                        expand: true
+                        cwd: "#{ROOT}/css/app"
+                        src: "!**/*.less"
+                        dest: "#{BUILD}/css/app"
+                    }
+                ]
+            lib_css:
+                files: [
+                    {
+                        expand: true
+                        cwd: "#{ROOT}/css/lib"
+                        src: ['!**/*.css','!**/*.min.css']
+                        dest: "#{BUILD}/css/lib"
+                    }
+                ]
+            app_js:
+                files: [
+                    {
+                        expand: true
+                        cwd: "#{ROOT}/js/app"
+                        src: ['!**/*.js','!**/*.min.js']
+                        dest: "#{BUILD}/js/app"
+                    }
+                ]
+            lib_js:
+                files: [
+                    {
+                        expand: true
+                        cwd: "#{ROOT}/js/lib"
+                        src: ['!**/*.js','!**/*.min.js']
+                        dest: "#{BUILD}/js/lib"
+                    }
+                ]
+            image:
+                files: [
+                    {
+                        expand: true
+                        cwd: "#{ROOT}/img"
+                        src: ["!**/*.{png,jpg,gif}"]
+                        dest: "#{BUILD}/img"
+                    }
+                ]
         #压缩js
         uglify:
             app:
@@ -134,53 +180,8 @@ module.exports = (grunt)->
             image:
                 files: ["static/img/**/*.{png,jpg,gif}"]
                 tasks: ['imagemin']
-        copy:
-            app_css:
-                files: [
-                    {
-                        expand: true
-                        cwd: "#{ROOT}/css/app"
-                        src: "!**/*.less"
-                        dest: "#{BUILD}/css/app"
-                    }
-                ]
-            lib_css:
-                files: [
-                    {
-                        expand: true
-                        cwd: "#{ROOT}/css/lib"
-                        src: ['!**/*.css','!**/*.min.css']
-                        dest: "#{BUILD}/css/lib"
-                    }
-                ]
-            app_js:
-                files: [
-                    {
-                        expand: true
-                        cwd: "#{ROOT}/js/app"
-                        src: ['!**/*.js','!**/*.min.js']
-                        dest: "#{BUILD}/js/app"
-                    }
-                ]
-            lib_js:
-                files: [
-                    {
-                        expand: true
-                        cwd: "#{ROOT}/js/lib"
-                        src: ['!**/*.js','!**/*.min.js']
-                        dest: "#{BUILD}/js/lib"
-                    }
-                ]
-            image:
-                files: [
-                    {
-                        expand: true
-                        cwd: "#{ROOT}/img"
-                        src: ["!**/*.{png,jpg,gif}"]
-                        dest: "#{BUILD}/img"
-                    }
-                ]
     # Load the plugin that provides the "uglify" task.
+    grunt.loadNpmTasks('grunt-contrib-copy')
     grunt.loadNpmTasks('grunt-contrib-uglify')
     grunt.loadNpmTasks('grunt-contrib-jshint')
     grunt.loadNpmTasks('grunt-contrib-requirejs')
@@ -190,6 +191,6 @@ module.exports = (grunt)->
     grunt.loadNpmTasks('grunt-contrib-cssmin')
     grunt.loadNpmTasks('grunt-contrib-imagemin')
     grunt.loadNpmTasks('grunt-contrib-watch')
-    grunt.loadNpmTasks('grunt-contrib-copy')
+    
     # Default task(s).
-    grunt.registerTask('default', ['uglify', 'jshint', 'requirejs', 'less', 'csslint', 'csscomb', 'cssmin', 'imagemin', 'copy'])
+    grunt.registerTask('default', ['copy', 'uglify', 'jshint', 'requirejs', 'less', 'csslint', 'csscomb', 'cssmin', 'imagemin'])
