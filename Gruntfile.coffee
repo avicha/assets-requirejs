@@ -127,8 +127,8 @@ module.exports = (grunt)->
                     }
                 ]
         csslint:
-            # options:
-            #     csslintrc: '.csslintrc'
+            options:
+                csslintrc: '.csslintrc.json'
             app:
                 src: ["#{BUILD}/css/app/**/*.css"]
         #自动根据指定排列css属性
@@ -164,7 +164,7 @@ module.exports = (grunt)->
                         expand: true
                         cwd: "#{ROOT}/img"
                         src: "**/*.{png,jpg,gif}"
-                        dest: "#{ROOT}/img"
+                        dest: "#{BUILD}/img"
                     }
                 ]
         watch:
