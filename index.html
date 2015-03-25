@@ -8,13 +8,13 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
-    <link rel="stylesheet" type="text/css" href=""></head>
+    <link rel="stylesheet" type="text/css" href="http://static.demo.com/css/app-index.css"></head>
 <body>
-    <script type="text/javascript" src="./build/js/lib/requirejs/2.1.16/require.min.js"></script>
+    <script type="text/javascript" src="http://static.demo.com/js/lib/requirejs/2.1.16/require.min.js"></script>
     <script type="text/javascript">
     if(/debug/.test(window.location.search)){
         requirejs.config({
-            baseUrl: 'static/js',
+            baseUrl: 'http://staticdev.demo.com/js',
             paths: {
                 backbone: 'lib/backbone/1.1.2/backbone',
                 jquery: 'lib/jquery/1.7.2/jquery',
@@ -39,7 +39,7 @@
     }
     else{
         requirejs.config({
-            baseUrl: 'build/js',
+            baseUrl: 'http://static.demo.com/js',
         });
         require(['app-index']);
     }

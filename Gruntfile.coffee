@@ -1,18 +1,21 @@
 path = require 'path'
 fs = require 'fs'
 #生产目录
-ROOT = "#{__dirname}/static"
+SOURCE = "#{__dirname}/src"
 BUILD = "#{__dirname}/build"
 module.exports = (grunt)->
     #项目配置
     grunt.initConfig
         pkg: grunt.file.readJSON 'package.json'
+        clean:
+            build: BUILD
+        #复制不用构建的文件
         copy:
             app_css:
                 files: [
                     {
                         expand: true
-                        cwd: "#{ROOT}/css/app"
+                        cwd: "#{SOURCE}/css/app"
                         src: "!**/*.less"
                         dest: "#{BUILD}/css/app"
                     }
@@ -21,7 +24,7 @@ module.exports = (grunt)->
                 files: [
                     {
                         expand: true
-                        cwd: "#{ROOT}/css/lib"
+                        cwd: "#{SOURCE}/css/lib"
                         src: ['!**/*.css','!**/*.min.css']
                         dest: "#{BUILD}/css/lib"
                     }
@@ -30,7 +33,7 @@ module.exports = (grunt)->
                 files: [
                     {
                         expand: true
-                        cwd: "#{ROOT}/js/app"
+                        cwd: "#{SOURCE}/js/app"
                         src: ['!**/*.js','!**/*.min.js']
                         dest: "#{BUILD}/js/app"
                     }
@@ -39,7 +42,7 @@ module.exports = (grunt)->
                 files: [
                     {
                         expand: true
-                        cwd: "#{ROOT}/js/lib"
+                        cwd: "#{SOURCE}/js/lib"
                         src: ['!**/*.js','!**/*.min.js']
                         dest: "#{BUILD}/js/lib"
                     }
@@ -48,17 +51,23 @@ module.exports = (grunt)->
                 files: [
                     {
                         expand: true
-                        cwd: "#{ROOT}/img"
+                        cwd: "#{SOURCE}/img"
                         src: ["!**/*.{png,jpg,gif}"]
                         dest: "#{BUILD}/img"
                     }
                 ]
+        #检测js语法
+        jshint: 
+            options:
+                ignores: ["#{SOURCE}/js/app/**/*.min.js"]
+            uses_defaults: ["#{SOURCE}/js/app/**/*.js"]
+            with_overrides: []
         #压缩js
         uglify:
             app:
                 files: [
                     expand: true
-                    cwd: "#{ROOT}/js/app"
+                    cwd: "#{SOURCE}/js/app"
                     src: ['**/*.js','!**/*.min.js']
                     ext: '.min.js'
                     dest: "#{BUILD}/js/app"
@@ -66,17 +75,12 @@ module.exports = (grunt)->
             lib:
                 files: [
                     expand: true
-                    cwd: "#{ROOT}/js/lib"
+                    cwd: "#{SOURCE}/js/lib"
                     src: ['**/*.js','!**/*.min.js']
                     ext: '.min.js'
                     dest: "#{BUILD}/js/lib"
                 ]
-        #检测js语法
-        jshint: 
-            options:
-                ignores: ["#{ROOT}/js/app/**/*.min.js"]
-            uses_defaults: ["#{ROOT}/js/app/**/*.js"]
-            with_overrides: []
+        #requirejs模块化并合并压缩js
         requirejs:
             options:
                 paths:
@@ -90,15 +94,16 @@ module.exports = (grunt)->
                         exports: 'Backbone'
                     underscore: 
                         exports: '_'
+            #合并首页js
             appIndex:
                 options:
-                    baseUrl: 'static/js'
+                    baseUrl: 'src/js'
                     out: "#{BUILD}/js/app-index.js"
                     name: 'app/view/index'
         #编译less成css
         less:
             options:
-                paths: ["#{ROOT}/css"]
+                paths: ["#{SOURCE}/css"]
             app:
                 #自动添加后缀
                 options:
@@ -108,10 +113,10 @@ module.exports = (grunt)->
                 files: [
                     {
                         expand: true
-                        cwd: "#{ROOT}/css/app"
+                        cwd: "#{SOURCE}/css/app"
                         src: '**/*.less'
                         ext: '.css'
-                        dest: "#{BUILD}/css/app"
+                        dest: "#{SOURCE}/css/app"
                     }
                 ]
             lib:
@@ -120,17 +125,18 @@ module.exports = (grunt)->
                 files: [
                     {
                         expand: true
-                        cwd: "#{ROOT}/css/lib"
+                        cwd: "#{SOURCE}/css/lib"
                         src: ['**/*.css','!**/*.min.css']
                         ext: '.min.css'
                         dest: "#{BUILD}/css/lib"
                     }
                 ]
+        #检测编译好的css语法
         csslint:
             options:
                 csslintrc: '.csslintrc.json'
             app:
-                src: ["#{BUILD}/css/app/**/*.css"]
+                src: ["#{SOURCE}/css/app/**/*.css","!#{SOURCE}/css/app/**/*.min.css"]
         #自动根据指定排列css属性
         csscomb:
             options:
@@ -139,10 +145,10 @@ module.exports = (grunt)->
                 files: [
                     {
                         expand: true
-                        cwd: "#{BUILD}/css/app"
+                        cwd: "#{SOURCE}/css/app"
                         src: ['**/*.css','!**/*.min.css']
                         ext: '.css'
-                        dest: "#{BUILD}/css/app"
+                        dest: "#{SOURCE}/css/app"
                     }
                 ]
         #压缩css文件
@@ -151,37 +157,47 @@ module.exports = (grunt)->
                 files: [
                     {
                         expand: true
-                        cwd: "#{BUILD}/css/app"
+                        cwd: "#{SOURCE}/css/app"
                         src: ['**/*.css','!**/*.min.css']
                         ext: '.min.css'
                         dest: "#{BUILD}/css/app"
                     }
                 ]
+        #合并文件
+        concat:
+            #合并首页css
+            appIndexCss:
+                src: ["#{BUILD}/css/lib/normalize/3.0.2/normalize.min.css", "#{BUILD}/css/app/common.min.css"]
+                dest: "#{BUILD}/css/app-index.css"
+        #压缩图片素材
         imagemin:
             common:
                 files: [
                     {
                         expand: true
-                        cwd: "#{ROOT}/img"
+                        cwd: "#{SOURCE}/img"
                         src: "**/*.{png,jpg,gif}"
                         dest: "#{BUILD}/img"
                     }
                 ]
+        #监控文件变化，实时进行编译
         watch:
             options:
                 spawn: false
                 interrupt: true
             app_js:
-                files: ["static/js/app/**/*.js"]
+                files: ["src/js/app/**/*.js"]
                 tasks: ['uglify:app','jshint','requirejs']  
             app_css:
-                files: ["static/css/app/**/*.less"]
-                tasks: ['less:app','csslint:app','csscomb:app','cssmin:app']
+                files: ["src/css/app/**/*.less"]
+                tasks: ['less:app','csslint:app','csscomb:app','cssmin:app','concat:appIndexCss']
             image:
-                files: ["static/img/**/*.{png,jpg,gif}"]
+                files: ["src/img/**/*.{png,jpg,gif}"]
                 tasks: ['imagemin']
     # Load the plugin that provides the "uglify" task.
+    grunt.loadNpmTasks('grunt-contrib-clean')
     grunt.loadNpmTasks('grunt-contrib-copy')
+    grunt.loadNpmTasks('grunt-contrib-concat')
     grunt.loadNpmTasks('grunt-contrib-uglify')
     grunt.loadNpmTasks('grunt-contrib-jshint')
     grunt.loadNpmTasks('grunt-contrib-requirejs')
@@ -193,4 +209,4 @@ module.exports = (grunt)->
     grunt.loadNpmTasks('grunt-contrib-watch')
     
     # Default task(s).
-    grunt.registerTask('default', ['copy', 'uglify', 'jshint', 'requirejs', 'less', 'csslint', 'csscomb', 'cssmin', 'imagemin'])
+    grunt.registerTask('default', ['clean', 'copy', 'uglify', 'jshint', 'requirejs', 'less', 'csslint', 'csscomb', 'cssmin','concat', 'imagemin'])

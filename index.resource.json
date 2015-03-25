@@ -1,8 +1,9 @@
 {
     "development": {
-        "js": ["http://static.lovejingyi.com/build/js/lib/requirejs/2.1.16/require.min.js"],
+        "css": ["http://staticdev.demo.com/css/lib/normalize/3.0.2/normalize.css", "http://staticdev.demo.com/css//app/common.css"],
+        "js": ["http://staticdev.demo.com/js/lib/requirejs/2.1.16/require.js"],
         "requirejsConfig": {
-            "baseUrl": "static/js",
+            "baseUrl": "http://staticdev.demo.com/js",
             "paths": {
                 "backbone": "lib/backbone/1.1.2/backbone",
                 "jquery": "lib/jquery/1.7.2/jquery",
@@ -26,9 +27,10 @@
         "requirejsMain": "app/view/index"
     },
     "production": {
-        "js": ["http://static.lovejingyi.com/build/js/lib/requirejs/2.1.16/require.min.js"],
+        "css": ["http://static.demo.com/css/app-index.css"],
+        "js": ["http://static.demo.com/js/lib/requirejs/2.1.16/require.min.js"],
         "requirejsConfig": {
-            "baseUrl": "build/js"
+            "baseUrl": "http://static.demo.com/js"
         },
         "requirejsMain": "app-index"
     }
