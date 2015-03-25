@@ -1,0 +1,35 @@
+{
+    "development": {
+        "js": ["http://static.lovejingyi.com/build/js/lib/requirejs/2.1.16/require.min.js"],
+        "requirejsConfig": {
+            "baseUrl": "static/js",
+            "paths": {
+                "backbone": "lib/backbone/1.1.2/backbone",
+                "jquery": "lib/jquery/1.7.2/jquery",
+                "swiper": "lib/swiper/3.0.4/swiper.jquery",
+                "underscore": "lib/underscore/1.8.2/underscore"
+            },
+            "shim": {
+                "backbone": {
+                    //These script dependencies should be loaded before loading
+                    //backbone.js
+                    "deps": ["underscore", "jquery"],
+                    //Once loaded, use the global 'Backbone' as the
+                    //module value.
+                    "exports": "Backbone"
+                },
+                "underscore": {
+                    "exports": "_"
+                },
+            }
+        },
+        "requirejsMain": "app/view/index"
+    },
+    "production": {
+        "js": ["http://static.lovejingyi.com/build/js/lib/requirejs/2.1.16/require.min.js"],
+        "requirejsConfig": {
+            "baseUrl": "build/js"
+        },
+        "requirejsMain": "app-index"
+    }
+}
