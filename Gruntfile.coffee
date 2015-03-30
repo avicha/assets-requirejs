@@ -7,6 +7,7 @@ module.exports = (grunt)->
     #项目配置
     grunt.initConfig
         pkg: grunt.file.readJSON 'package.json'
+        #根据项目自身情况，决定是否先清空构建目录
         clean:
             build: BUILD
         #复制不用构建的文件
@@ -69,7 +70,7 @@ module.exports = (grunt)->
                     expand: true
                     cwd: "#{SOURCE}/js/app"
                     src: ['**/*.js','!**/*.min.js']
-                    ext: '.min.js'
+                    ext: '.js'
                     dest: "#{BUILD}/js/app"
                 ]
             lib:
@@ -77,7 +78,7 @@ module.exports = (grunt)->
                     expand: true
                     cwd: "#{SOURCE}/js/lib"
                     src: ['**/*.js','!**/*.min.js']
-                    ext: '.min.js'
+                    ext: '.js'
                     dest: "#{BUILD}/js/lib"
                 ]
         #requirejs模块化并合并压缩js
@@ -127,7 +128,7 @@ module.exports = (grunt)->
                         expand: true
                         cwd: "#{SOURCE}/css/lib"
                         src: ['**/*.css','!**/*.min.css']
-                        ext: '.min.css'
+                        ext: '.css'
                         dest: "#{BUILD}/css/lib"
                     }
                 ]
@@ -159,7 +160,7 @@ module.exports = (grunt)->
                         expand: true
                         cwd: "#{SOURCE}/css/app"
                         src: ['**/*.css','!**/*.min.css']
-                        ext: '.min.css'
+                        ext: '.css'
                         dest: "#{BUILD}/css/app"
                     }
                 ]
@@ -167,8 +168,40 @@ module.exports = (grunt)->
         concat:
             #合并首页css
             appIndexCss:
-                src: ["#{BUILD}/css/lib/normalize/3.0.2/normalize.min.css", "#{BUILD}/css/app/common.min.css"]
+                src: ["#{BUILD}/css/lib/normalize/3.0.2/normalize.css", "#{BUILD}/css/app/common.css"]
                 dest: "#{BUILD}/css/app-index.css"
+        md5:
+            options:
+                encoding: null
+                keepBasename: true
+                keepExtension: true
+            css:
+                files: [
+                    {
+                        expand: true
+                        cwd: "#{BUILD}"
+                        src: ['css/**/*.css','!css/**/*.min.css','!css/lib/**/*.css','js/**/*.js','!js/**/*.min.js','!js/lib/**/*.js']
+                        dest: "#{BUILD}"
+                        filter: (src)->
+                            !/-[a-f0-9]{32}.(js|css)$/.test src
+                    }
+                ]
+                options:
+                    afterEach: (filename, options)->
+                        #console.log filename.oldPath,filename.newPath
+                        # 旧文件随你删不删除
+                        # fs.unlinkSync filename.oldPath
+                    after: (fileChanges, options)->
+                        resourceMap = []
+                        resourceMap = fileChanges.map (fileChange)->
+                            oldPath = path.relative "#{BUILD}", fileChange.oldPath
+                            newPath = path.relative "#{BUILD}", fileChange.newPath
+                            oldPath = (oldPath.split path.sep).join '/'
+                            newPath = (newPath.split path.sep).join '/'
+                            # console.log oldPath,newPath
+                            "    \"/#{oldPath}\": \"/#{newPath}\""
+                        resourceMap = '{\n'+resourceMap.join(',\n')+'\n}'
+                        fs.writeFileSync "#{__dirname}/resource/resource-map.json",resourceMap
         #压缩图片素材
         imagemin:
             common:
@@ -185,15 +218,18 @@ module.exports = (grunt)->
             options:
                 spawn: false
                 interrupt: true
+            #因为js开发过程不需要实时编译，所以不进行压缩合并等，但只做语法检测
             app_js:
                 files: ["src/js/app/**/*.js"]
-                tasks: ['uglify:app','jshint','requirejs']  
+                tasks: ['jshint']  
+            #css因为开发过程需要编译less，所以进行监听，但只进行编译和语法检测
             app_css:
                 files: ["src/css/app/**/*.less"]
-                tasks: ['less:app','csslint:app','csscomb:app','cssmin:app','concat:appIndexCss']
-            image:
-                files: ["src/img/**/*.{png,jpg,gif}"]
-                tasks: ['imagemin']
+                tasks: ['less:app','csslint:app']
+            #去掉图片文件的监听，上线前一次性构建压缩即可
+            # image:
+            #     files: ["src/img/**/*.{png,jpg,gif}"]
+            #     tasks: ['imagemin']
     # Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-clean')
     grunt.loadNpmTasks('grunt-contrib-copy')
@@ -205,8 +241,9 @@ module.exports = (grunt)->
     grunt.loadNpmTasks('grunt-contrib-csslint')
     grunt.loadNpmTasks('grunt-csscomb')
     grunt.loadNpmTasks('grunt-contrib-cssmin')
+    grunt.loadNpmTasks('grunt-md5')
     grunt.loadNpmTasks('grunt-contrib-imagemin')
     grunt.loadNpmTasks('grunt-contrib-watch')
-    
-    # Default task(s).
-    grunt.registerTask('default', ['clean', 'copy', 'uglify', 'jshint', 'requirejs', 'less', 'csslint', 'csscomb', 'cssmin','concat', 'imagemin'])
+
+    # Default task(s). 上线前一次性构建一次
+    grunt.registerTask('default', ['clean', 'copy', 'jshint', 'uglify', 'requirejs', 'less', 'csslint', 'csscomb', 'cssmin','concat','md5', 'imagemin'])

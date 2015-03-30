@@ -1,7 +1,8 @@
 {
     "development": {
-        "css": ["http://staticdev.demo.com/css/lib/normalize/3.0.2/normalize.css", "http://staticdev.demo.com/css//app/common.css"],
-        "js": ["http://staticdev.demo.com/js/lib/requirejs/2.1.16/require.js"],
+        "host": "http://staticdev.demo.com",
+        "css": ["/css/lib/normalize/3.0.2/normalize.css", "/css/app/common.css"],
+        "js": ["/js/lib/requirejs/2.1.16/require.js"],
         "requirejsConfig": {
             "baseUrl": "http://staticdev.demo.com/js",
             "paths": {
@@ -27,8 +28,9 @@
         "requirejsMain": "app/view/index"
     },
     "production": {
-        "css": ["http://static.demo.com/css/app-index.css"],
-        "js": ["http://static.demo.com/js/lib/requirejs/2.1.16/require.min.js"],
+        "host": "http://static.demo.com",
+        "css": ["/css/app-index.css"],
+        "js": ["/js/lib/requirejs/2.1.16/require.js"],
         "requirejsConfig": {
             "baseUrl": "http://static.demo.com/js"
         },
