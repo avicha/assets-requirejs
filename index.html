@@ -11,41 +11,19 @@
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
     <![endif]-->
-    <link rel="stylesheet" type="text/css" href="http://static.demo.com/css/app-index.css"></head>
+    <link rel="stylesheet" type="text/css" href="http://staticdev.demo.com/css/lib/normalize/3.0.2/normalize.css">
+    <link rel="stylesheet" type="text/css" href="http://staticdev.demo.com/css/app/common/1.0.0/common.css">
+    <link rel="stylesheet" type="text/css" href="http://staticdev.demo.com/css/app/demo/index.css"></head>
 <body>
-    <script type="text/javascript" src="http://static.demo.com/js/lib/requirejs/2.1.16/require.min.js"></script>
+    <script type="text/javascript" src="http://staticdev.demo.com/js/lib/jquery/1.7.2/jquery.js"></script>
+    <script type="text/javascript" src="http://staticdev.demo.com/js/lib/underscore/1.8.2/underscore.js"></script>
+    <script type="text/javascript" src="http://staticdev.demo.com/js/lib/backbone/1.1.2/backbone.js"></script>
+    <script type="text/javascript" src="http://staticdev.demo.com/js/lib/requirejs/2.1.16/require.js"></script>
     <script type="text/javascript">
-    if(/debug/.test(window.location.search)){
         requirejs.config({
-            baseUrl: 'http://staticdev.demo.com/js',
-            paths: {
-                backbone: 'lib/backbone/1.1.2/backbone',
-                jquery: 'lib/jquery/1.7.2/jquery',
-                swiper: 'lib/swiper/3.0.4/swiper.jquery',
-                underscore: 'lib/underscore/1.8.2/underscore'
-            },
-            shim: {
-                'backbone': {
-                    //These script dependencies should be loaded before loading
-                    //backbone.js
-                    deps: ['underscore', 'jquery'],
-                    //Once loaded, use the global 'Backbone' as the
-                    //module value.
-                    exports: 'Backbone'
-                },
-                'underscore': {
-                    exports: '_'
-                },
-            }
+            baseUrl: 'http://staticdev.demo.com/js/app/demo',
         });
-        require(['app/view/index']);
-    }
-    else{
-        requirejs.config({
-            baseUrl: 'http://static.demo.com/js',
-        });
-        require(['app-index']);
-    }
+        require(['view/index']);
 </script>
 </body>
 </html>

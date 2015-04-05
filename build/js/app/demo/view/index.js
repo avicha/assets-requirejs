@@ -1,0 +1,1 @@
+define("view/a",["require"],function(e){return{say:function(e){console.log("I am a saying:"+e)}}}),define("view/b",[],function(){return{say:function(e){console.log("I am b saying:"+e)}}}),require(["view/a","view/b"],function(e,t){e.say("hello"),t.say("world")}),define("view/index",function(){});

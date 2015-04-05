@@ -17,7 +17,7 @@ module.exports = (grunt)->
                     {
                         expand: true
                         cwd: "#{SOURCE}/css/app"
-                        src: "!**/*.less"
+                        src: ['!**/*.css','!**/*.less']
                         dest: "#{BUILD}/css/app"
                     }
                 ]
@@ -61,18 +61,17 @@ module.exports = (grunt)->
         jshint: 
             options:
                 ignores: ["#{SOURCE}/js/app/**/*.min.js"]
-            uses_defaults: ["#{SOURCE}/js/app/**/*.js"]
-            with_overrides: []
+            app: ["#{SOURCE}/js/app/**/*.js"]
         #压缩js
         uglify:
-            app:
-                files: [
-                    expand: true
-                    cwd: "#{SOURCE}/js/app"
-                    src: ['**/*.js','!**/*.min.js']
-                    ext: '.js'
-                    dest: "#{BUILD}/js/app"
-                ]
+            # app:
+            #     files: [
+            #         expand: true
+            #         cwd: "#{SOURCE}/js/app"
+            #         src: ['**/*.js','!**/*.min.js']
+            #         ext: '.js'
+            #         dest: "#{BUILD}/js/app"
+            #     ]
             lib:
                 files: [
                     expand: true
@@ -98,9 +97,9 @@ module.exports = (grunt)->
             #合并首页js
             appIndex:
                 options:
-                    baseUrl: 'src/js'
-                    out: "#{BUILD}/js/app-index.js"
-                    name: 'app/view/index'
+                    baseUrl: 'src/js/app/demo'
+                    out: "#{BUILD}/js/app/demo/view/index.js"
+                    name: 'view/index'
         #编译less成css
         less:
             options:
@@ -165,11 +164,11 @@ module.exports = (grunt)->
                     }
                 ]
         #合并文件
-        concat:
-            #合并首页css
-            appIndexCss:
-                src: ["#{BUILD}/css/lib/normalize/3.0.2/normalize.css", "#{BUILD}/css/app/common.css"]
-                dest: "#{BUILD}/css/app-index.css"
+        # concat:
+        #     #合并首页css
+        #     indexCss:
+        #         src: ["#{BUILD}/css/lib/normalize/3.0.2/normalize.css", "#{BUILD}/css/app/common/1.0.0/common.css"]
+        #         dest: "#{BUILD}/css/app/index.css"
         md5:
             options:
                 encoding: null
@@ -180,7 +179,7 @@ module.exports = (grunt)->
                     {
                         expand: true
                         cwd: "#{BUILD}"
-                        src: ['css/**/*.css','!css/**/*.min.css','!css/lib/**/*.css','js/**/*.js','!js/**/*.min.js','!js/lib/**/*.js']
+                        src: ['css/app/**/*.css','js/app/**/*.js']
                         dest: "#{BUILD}"
                         filter: (src)->
                             !/-[a-f0-9]{32}.(js|css)$/.test src
@@ -190,7 +189,7 @@ module.exports = (grunt)->
                     afterEach: (filename, options)->
                         #console.log filename.oldPath,filename.newPath
                         # 旧文件随你删不删除
-                        # fs.unlinkSync filename.oldPath
+                        fs.unlinkSync filename.newPath
                     after: (fileChanges, options)->
                         resourceMap = []
                         resourceMap = fileChanges.map (fileChange)->
@@ -246,4 +245,4 @@ module.exports = (grunt)->
     grunt.loadNpmTasks('grunt-contrib-watch')
 
     # Default task(s). 上线前一次性构建一次
-    grunt.registerTask('default', ['clean', 'copy', 'jshint', 'uglify', 'requirejs', 'less', 'csslint', 'csscomb', 'cssmin','concat','md5', 'imagemin'])
+    grunt.registerTask('default', ['clean', 'copy', 'jshint', 'uglify', 'requirejs', 'less', 'csslint', 'csscomb', 'cssmin', 'md5', 'imagemin'])
