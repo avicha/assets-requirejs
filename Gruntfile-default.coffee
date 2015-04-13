@@ -3,7 +3,6 @@ fs = require 'fs'
 #生产目录
 SOURCE = "#{__dirname}/src"
 BUILD = "#{__dirname}/build"
-APP = 'demo'
 module.exports = (grunt)->
     #项目配置
     grunt.initConfig
@@ -66,6 +65,14 @@ module.exports = (grunt)->
             app: ["#{SOURCE}/js/app/**/*.js"]
         #压缩js
         uglify:
+            app:
+                files: [
+                    expand: true
+                    cwd: "#{SOURCE}/js/app"
+                    src: ['**/*.js','!**/*.min.js']
+                    ext: '.js'
+                    dest: "#{BUILD}/js/app"
+                ]
             lib:
                 files: [
                     expand: true
@@ -74,26 +81,6 @@ module.exports = (grunt)->
                     ext: '.js'
                     dest: "#{BUILD}/js/lib"
                 ]
-        #requirejs模块化并合并压缩js
-        requirejs:
-            options:
-                paths:
-                    backbone: 'lib/backbone/1.1.2/backbone'
-                    jquery: 'lib/jquery/1.7.2/jquery'
-                    swiper: 'lib/swiper/3.0.4/swiper.jquery'
-                    underscore: 'lib/underscore/1.8.2/underscore'
-                shim:
-                    backbone: 
-                        deps: ['underscore', 'jquery']
-                        exports: 'Backbone'
-                    underscore: 
-                        exports: '_'
-            #合并首页js
-            appIndex:
-                options:
-                    baseUrl: "src/js/app/#{APP}"
-                    out: "#{BUILD}/js/app/#{APP}/view/index.js"
-                    name: 'view/index'
         #编译less成css
         less:
             options:
@@ -184,6 +171,7 @@ module.exports = (grunt)->
                             newPath = path.relative "#{BUILD}", fileChange.newPath
                             oldPath = (oldPath.split path.sep).join '/'
                             newPath = (newPath.split path.sep).join '/'
+                            # console.log oldPath,newPath
                             "    \"/#{oldPath}\": \"/#{newPath}\""
                         resourceMap = '{\n'+resourceMap.join(',\n')+'\n}'
                         fs.writeFileSync "#{__dirname}/resource-map.json",resourceMap
@@ -226,4 +214,4 @@ module.exports = (grunt)->
     grunt.loadNpmTasks('grunt-contrib-watch')
 
     # Default task(s). 上线前一次性构建一次
-    grunt.registerTask('default', ['clean', 'copy', 'jshint', 'uglify', 'requirejs', 'less', 'csslint', 'csscomb', 'cssmin', 'md5', 'imagemin'])
+    grunt.registerTask('default', ['clean', 'copy', 'jshint', 'uglify', 'less', 'csslint', 'csscomb', 'cssmin', 'md5', 'imagemin'])
