@@ -160,6 +160,17 @@
         width: 8.33333333%;
     }
 }
+.bottomFixed() {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.setOpacity(@opacity){
+    @IEOpacity: 100*@opacity;
+    opacity: @opacity;
+    filter: alpha(opacity=@IEOpacity);
+}
 //省略号显示文本内容
 .text-ellipsis() {
     text-overflow: ellipsis;
@@ -192,10 +203,14 @@
         color: #333;
         cursor: pointer;
         & > a {
+            text-align: center;
             text-decoration: none;
         }
     }
     & > li {
         list-style: none;
     }
+}
+.clearFix {
+    clear: both;
 }

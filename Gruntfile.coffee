@@ -17,7 +17,7 @@ module.exports = (grunt)->
                     {
                         expand: true
                         cwd: "#{SOURCE}/css/app"
-                        src: ['!**/*.css','!**/*.less']
+                        src: ['**','!**/*.css','!**/*.less']
                         dest: "#{BUILD}/css/app"
                     }
                 ]
@@ -26,7 +26,7 @@ module.exports = (grunt)->
                     {
                         expand: true
                         cwd: "#{SOURCE}/css/lib"
-                        src: ['!**/*.css','!**/*.min.css']
+                        src: ['**','!**/*.css','!**/*.min.css']
                         dest: "#{BUILD}/css/lib"
                     }
                 ]
@@ -35,7 +35,7 @@ module.exports = (grunt)->
                     {
                         expand: true
                         cwd: "#{SOURCE}/js/app"
-                        src: ['!**/*.js','!**/*.min.js']
+                        src: ['**','!**/*.js','!**/*.min.js']
                         dest: "#{BUILD}/js/app"
                     }
                 ]
@@ -44,7 +44,7 @@ module.exports = (grunt)->
                     {
                         expand: true
                         cwd: "#{SOURCE}/js/lib"
-                        src: ['!**/*.js','!**/*.min.js']
+                        src: ['**','!**/*.js','!**/*.min.js']
                         dest: "#{BUILD}/js/lib"
                     }
                 ]
@@ -53,8 +53,9 @@ module.exports = (grunt)->
                     {
                         expand: true
                         cwd: "#{SOURCE}/img"
-                        src: ["!**/*.{png,jpg,gif}"]
+                        src: ['**','!**/*.{jpg|png|gif}']
                         dest: "#{BUILD}/img"
+                        
                     }
                 ]
         #检测js语法
@@ -200,7 +201,7 @@ module.exports = (grunt)->
                             # console.log oldPath,newPath
                             "    \"/#{oldPath}\": \"/#{newPath}\""
                         resourceMap = '{\n'+resourceMap.join(',\n')+'\n}'
-                        fs.writeFileSync "#{__dirname}/resource/resource-map.json",resourceMap
+                        fs.writeFileSync "#{__dirname}/resource-map.json",resourceMap
         #压缩图片素材
         imagemin:
             common:
@@ -215,8 +216,7 @@ module.exports = (grunt)->
         #监控文件变化，实时进行编译
         watch:
             options:
-                spawn: false
-                interrupt: true
+                spawn: true
             #因为js开发过程不需要实时编译，所以不进行压缩合并等，但只做语法检测
             app_js:
                 files: ["src/js/app/**/*.js"]

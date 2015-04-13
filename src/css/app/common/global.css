@@ -176,7 +176,10 @@
 
 	color: #333;
 }
-.nav-bar .nav > a { text-decoration: none;
+.nav-bar .nav > a { text-align: center;
+	text-decoration: none;
 }
 .nav-bar > li { list-style: none;
+}
+.clearFix { clear: both;
 }
