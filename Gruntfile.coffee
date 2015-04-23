@@ -59,6 +59,13 @@ module.exports = (grunt)->
                         
                     }
                 ]
+            others:
+                files: [
+                    expand: true
+                    cwd: "#{SOURCE}"
+                    src: ['**/*','!css/**','!js/**','!img/**']
+                    dest: "#{BUILD}"
+                ]
         #检测js语法
         jshint: 
             options:
